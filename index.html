@@ -19,7 +19,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    max-width: 500px;
+    max-width: 520px;
     padding: 20px;
   }
 
@@ -48,63 +48,86 @@
   }
 
   #love {
-    font-size: 32px;
+    font-size: 34px;
     font-weight: bold;
     margin-top: 30px;
-    animation: pop 0.8s ease-out forwards;
     opacity: 0;
+    animation: pop 0.9s ease-out forwards;
   }
 
   @keyframes pop {
     0% { transform: scale(0.3); opacity: 0; }
-    60% { transform: scale(1.2); opacity: 1; }
+    60% { transform: scale(1.25); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
   }
 </style>
 </head>
 <body>
 
+<!-- Intro -->
 <div id="intro" class="center">
   <h2>Dear Anu,</h2>
   <p>
     I know it’s not that much of an effort,<br>
     but here’s a game I created for you.
   </p>
-  <button onclick="startGame()">Play</button>
+  <button onclick="startIntro()">Play</button>
 </div>
 
+<!-- Game instruction -->
+<div id="gameIntro" class="center hidden">
+  <p>Try to touch the undo button in the game.<br>
+  If it switches position, touch it again.</p>
+</div>
+
+<!-- Undo Button -->
 <button id="undoBtn">↩ UNDO</button>
 
-<div id="final" class="center hidden">
+<!-- Message -->
+<div id="message" class="center hidden">
   <div class="msg">
     Ei Anu,<br><br>
     I know life doesn’t have an undo button.<br>
-    Just like this game, we can’t undo certain things,<br>
+    Just like the game here, we can’t undo certain things,<br>
     but we can make things better, fix it.<br><br>
-    After all, it’s us, right?<br><br>
+    After all, it’s us, right?
+  </div>
+  <div class="msg">
     There won’t be any other morning in your life<br>
     that I don’t call you until the day you wake up next to me.<br><br>
-    I’m sorry for today.<br><br>
+    I’m sorry for today.<br>
     Hey, one more thing.
   </div>
-  <button onclick="showLove()">Click here</button>
+  <button onclick="showLove()">Next</button>
+</div>
+
+<!-- Love -->
+<div id="loveScreen" class="center hidden">
   <div id="love">I LOVE YOU ANU</div>
 </div>
 
 <script>
-  const undo = document.getElementById("undoBtn");
   const intro = document.getElementById("intro");
-  const final = document.getElementById("final");
-  const love = document.getElementById("love");
+  const gameIntro = document.getElementById("gameIntro");
+  const undo = document.getElementById("undoBtn");
+  const message = document.getElementById("message");
+  const loveScreen = document.getElementById("loveScreen");
 
-  let tries = 0;
-  let moveInterval;
+  let touches = 0;
+
+  function startIntro() {
+    intro.classList.add("hidden");
+    gameIntro.classList.remove("hidden");
+
+    setTimeout(() => {
+      gameIntro.classList.add("hidden");
+      startGame();
+    }, 3000);
+  }
 
   function startGame() {
-    intro.classList.add("hidden");
     undo.style.display = "block";
     moveUndo();
-    moveInterval = setInterval(moveUndo, 700);
   }
 
   function moveUndo() {
@@ -115,25 +138,24 @@
   }
 
   undo.onclick = () => {
-    tries++;
-    if (tries >= 5) {
-      endGame();
-    } else {
+    touches++;
+    if (touches < 4) {
       moveUndo();
+    } else {
+      endGame();
     }
   };
 
   function endGame() {
-    clearInterval(moveInterval);
     undo.style.display = "none";
-    final.classList.remove("hidden");
+    message.classList.remove("hidden");
   }
 
   function showLove() {
-    love.style.opacity = 1;
+    message.classList.add("hidden");
+    loveScreen.classList.remove("hidden");
   }
 </script>
 
 </body>
 </html>
-

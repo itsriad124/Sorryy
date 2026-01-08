@@ -2,162 +2,138 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>For Anu ❤️</title>
+<title>Undo</title>
 <style>
-    body {
-        margin: 0;
-        height: 100vh;
-        background: linear-gradient(135deg, #ffdde1, #ee9ca7);
-        font-family: 'Segoe UI', sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #333;
-    }
-    .card {
-        background: white;
-        padding: 30px;
-        border-radius: 20px;
-        width: 90%;
-        max-width: 420px;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        animation: fade 0.6s ease;
-    }
-    @keyframes fade {
-        from {opacity: 0; transform: scale(0.95);}
-        to {opacity: 1; transform: scale(1);}
-    }
-    h1 {
-        color: #e75480;
-    }
-    input {
-        padding: 10px;
-        width: 80%;
-        margin-top: 15px;
-        font-size: 16px;
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        text-align: center;
-    }
-    button {
-        margin-top: 20px;
-        padding: 10px 25px;
-        font-size: 16px;
-        border: none;
-        border-radius: 20px;
-        background: #e75480;
-        color: white;
-        cursor: pointer;
-    }
-    button:hover {
-        background: #d9436c;
-    }
-    .image {
-        font-size: 60px;
-        margin-bottom: 10px;
-    }
-    .error {
-        color: red;
-        margin-top: 10px;
-    }
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #0f0f14;
+    color: #eaeaea;
+    font-family: system-ui, sans-serif;
+    overflow: hidden;
+  }
+
+  .center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    max-width: 500px;
+    padding: 20px;
+  }
+
+  button {
+    padding: 12px 26px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #ff4d6d;
+    color: white;
+  }
+
+  #undoBtn {
+    position: absolute;
+    display: none;
+    font-size: 18px;
+  }
+
+  .hidden { display: none; }
+
+  .msg {
+    line-height: 1.7;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+
+  #love {
+    font-size: 32px;
+    font-weight: bold;
+    margin-top: 30px;
+    animation: pop 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0.3); opacity: 0; }
+    60% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
 </style>
 </head>
 <body>
 
-<div class="card" id="app"></div>
+<div id="intro" class="center">
+  <h2>Dear Anu,</h2>
+  <p>
+    I know it’s not that much of an effort,<br>
+    but here’s a game I created for you.
+  </p>
+  <button onclick="startGame()">Play</button>
+</div>
+
+<button id="undoBtn">↩ UNDO</button>
+
+<div id="final" class="center hidden">
+  <div class="msg">
+    Ei Anu,<br><br>
+    I know life doesn’t have an undo button.<br>
+    Just like this game, we can’t undo certain things,<br>
+    but we can make things better, fix it.<br><br>
+    After all, it’s us, right?<br><br>
+    There won’t be any other morning in your life<br>
+    that I don’t call you until the day you wake up next to me.<br><br>
+    I’m sorry for today.<br><br>
+    Hey, one more thing.
+  </div>
+  <button onclick="showLove()">Click here</button>
+  <div id="love">I LOVE YOU ANU</div>
+</div>
 
 <script>
-let step = 0;
+  const undo = document.getElementById("undoBtn");
+  const intro = document.getElementById("intro");
+  const final = document.getElementById("final");
+  const love = document.getElementById("love");
 
-const pages = [
-    // PAGE 1
-    `
-    <div class="image">💖</div>
-    <h1>Hi Ananya!!</h1>
-    <p>To enter, enter the name Riad calls you by the most.<br><b>(ALL CAPITAL LETTERS)</b></p>
-    <input id="nameInput" placeholder="Enter here">
-    <br>
-    <button onclick="checkName()">Next</button>
-    <div class="error" id="error"></div>
-    `,
-    // PAGE 2
-    `
-    <div class="image">🌸</div>
-    <h1>Hey Anu,</h1>
-    <p>You’re the cutest person in this world that I’ve ever met…<br>
-    but I’d like you to know something.</p>
-    <button onclick="next()">Next</button>
-    `,
-    // PAGE 3
-    `
-    <div class="image">✨</div>
-    <p>Do you know how beautiful you are?<br>
-    How beautiful your smile is and how far I’m willing to go for you?</p>
-    <button onclick="next()">Next</button>
-    `,
-    // PAGE 4
-    `
-    <div class="image">😍</div>
-    <p>You are the definition of beauty.<br>
-    The most beautiful smile I’ve ever seen in this world.<br>
-    And I’ll do anything for you. <b>ANYTHING!!</b></p>
-    <button onclick="next()">Next</button>
-    `,
-    // PAGE 5
-    `
-    <div class="image">💌</div>
-    <p>But for now, here’s one thing I wanna tell you…</p>
-    <button onclick="next()">Next</button>
-    `,
-    // PAGE 6
-    `
-    <div class="image">🥺</div>
-    <p>I know I hurt you a lot.<br>
-    But I can’t stay away from you.<br>
-    Can’t stay a single second without talking to you.<br>
-    Can’t get my mind to think about anything other than you.</p>
-    <button onclick="next()">Next</button>
-    `,
-    // PAGE 7 (FINAL)
-    `
-    <div class="image">❤️</div>
-    <p>
-    Here’s one thing I want you to know…<br><br>
-    I love you more than anything.<br><br>
-    If I ever hurt you,<br>
-    shout at me,<br>
-    slap me,<br>
-    slap me twice,<br>
-    slap me thrice…<br><br>
-    But don’t stop talking to me.<br>
-    Don’t stay away even for a single second.<br><br>
-    <b>I’m sorry, my love.</b>
-    </p>
-    `
-];
+  let tries = 0;
+  let moveInterval;
 
-function render() {
-    document.getElementById("app").innerHTML = pages[step];
-}
+  function startGame() {
+    intro.classList.add("hidden");
+    undo.style.display = "block";
+    moveUndo();
+    moveInterval = setInterval(moveUndo, 700);
+  }
 
-function next() {
-    step++;
-    render();
-}
+  function moveUndo() {
+    const x = Math.random() * (window.innerWidth - 120);
+    const y = Math.random() * (window.innerHeight - 60);
+    undo.style.left = x + "px";
+    undo.style.top = y + "px";
+  }
 
-function checkName() {
-    const val = document.getElementById("nameInput").value;
-    if (val === "ANU") {
-        step++;
-        render();
+  undo.onclick = () => {
+    tries++;
+    if (tries >= 5) {
+      endGame();
     } else {
-        document.getElementById("error").innerText = "Wrong name 😔 Try again.";
+      moveUndo();
     }
-}
+  };
 
-render();
+  function endGame() {
+    clearInterval(moveInterval);
+    undo.style.display = "none";
+    final.classList.remove("hidden");
+  }
+
+  function showLove() {
+    love.style.opacity = 1;
+  }
 </script>
 
 </body>
 </html>
+
